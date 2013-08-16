@@ -147,9 +147,6 @@ class Database_PDO extends Database {
 				$e->getCode());
 		}
 
-		// Set the last query
-		$this->last_query = $sql;
-
 		if ($type === Database::SELECT)
 		{
 			// Convert the result into an array, as PDOStatement::rowCount is not reliable

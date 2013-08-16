@@ -191,9 +191,6 @@ class Database_MySQL extends Database {
 				mysql_errno($this->_connection));
 		}
 
-		// Set the last query
-		$this->last_query = $sql;
-
 		if ($type === Database::SELECT)
 		{
 			// Return an iterator of results

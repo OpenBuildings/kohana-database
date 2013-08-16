@@ -30,6 +30,17 @@ class Database_MySQLTest extends Testcase_Test {
 	}
 
 	/**
+	 * @covers Openbuildings\Kohana\Database::configure
+	 */
+	public function test_configure()
+	{
+		Database::configure('new_configureation', $this->database_config);
+
+		$database = Database::instance('not_persistant');
+		$database->connect();
+	}
+
+	/**
 	 * @expectedException Openbuildings\Kohana\Database_Exception
 	 * @covers Openbuildings\Kohana\Database_MySQL::connect
 	 * @covers Openbuildings\Kohana\Database_MySQL::_select_db
@@ -64,6 +75,37 @@ class Database_MySQLTest extends Testcase_Test {
 		$this->assertEquals(TRUE, $this->database->disconnect());
 	}
 
+	/**
+	 * @expectedException Openbuildings\Kohana\Database_Exception
+	 * @covers Openbuildings\Kohana\Database::instance
+	 */
+	public function test_instance()
+	{
+		$database = Database::instance();
+		$this->assertInstanceOf('Openbuildings\Kohana\Database_MySQL', $database);
+		$database->connect();
+
+		$database = Database::instance('not_set');
+	}
+
+	/**
+	 * @covers Openbuildings\Kohana\Database::__toString
+	 */
+	public function test_toString()
+	{
+		$this->assertEquals('default', Database::instance());
+	}
+
+	/**
+	 * @covers Openbuildings\Kohana\Database::__destruct
+	 */
+	public function test_destruct()
+	{
+		$database = $this->getMock('Openbuildings\Kohana\Database_MySQL', array('disconnect'), array('default', $this->database_config));
+		$database->expects($this->once())->method('disconnect');
+
+		$database->__destruct();
+	}
 	/**
 	 * @covers Openbuildings\Kohana\Database_MySQL::connect
 	 * @covers Openbuildings\Kohana\Database::connect
@@ -121,7 +163,18 @@ class Database_MySQLTest extends Testcase_Test {
 	}
 
 	/**
+	 * @covers Openbuildings\Kohana\Database::datatype
+	 */
+	public function test_datatype()
+	{
+		$this->assertEquals(array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'), $this->database->datatype('int'));
+		$this->assertEquals(array('type' => 'string'), $this->database->datatype('varchar'));
+		$this->assertEquals(array(), $this->database->datatype('nonexistent'));
+	}
+
+	/**
 	 * @covers Openbuildings\Kohana\Database_MySQL::list_columns
+	 * @covers Openbuildings\Kohana\Database::_parse_type
 	 */
 	public function test_list_columns()
 	{

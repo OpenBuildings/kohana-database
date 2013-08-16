@@ -33,6 +33,36 @@ abstract class Database {
 	public static $default = 'default';
 
 	/**
+	 * @var array
+	 */
+	public static $config = array(
+		'default' => array(
+			'type'       => 'MySQL',
+			'connection' => array(
+				/**
+				 * The following options are available for MySQL:
+				 *
+				 * string   hostname     server hostname, or socket
+				 * string   database     database name
+				 * string   username     database username
+				 * string   password     database password
+				 * boolean  persistent   use persistent connections?
+				 * array    variables    system variables as "key => value" pairs
+				 *
+				 * Ports and sockets may be appended to the hostname.
+				 */
+				'hostname'   => 'localhost',
+				'database'   => 'kohana',
+				'username'   => FALSE,
+				'password'   => FALSE,
+				'persistent' => FALSE,
+			),
+			'table_prefix' => '',
+			'charset'      => 'utf8',
+		)
+	);
+
+	/**
 	 * @var  array  Database instances
 	 */
 	public static $instances = array();
@@ -62,6 +92,11 @@ abstract class Database {
 
 		if ( ! isset(Database::$instances[$name]))
 		{
+			if (empty($config) AND isset(Database::$config[$name]))
+			{
+				$config = Database::$config[$name];
+			}
+
 			if ( ! isset($config['type']))
 			{
 				throw new Database_Exception('Database type not defined in :name configuration',
@@ -81,10 +116,10 @@ abstract class Database {
 		return Database::$instances[$name];
 	}
 
-	/**
-	 * @var  string  the last query executed
-	 */
-	public $last_query;
+	public static function configure($name, array $config)
+	{
+		Database::$config[$name] = $config;
+	}
 
 	// Character that is used to quote identifiers
 	protected $_identifier = '"';

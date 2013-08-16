@@ -24,7 +24,9 @@ abstract class Testcase_Test extends \PHPUnit_Framework_TestCase {
 	{
 		parent::setUp();
 
-		$this->database = Database::instance('default', $this->database_config);
+		Database::configure('default', $this->database_config);
+		
+		$this->database = Database::instance('default');
 	}
 }
 
