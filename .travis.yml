@@ -1,0 +1,17 @@
+--- 
+language: php
+
+php:
+  - 5.3
+
+script:
+  - phpunit --coverage-clover build/logs/clover.xml
+
+before_script:
+  - mysql -e 'create database `test-database`;'
+  - mysql test-database < tests/test_data/database.sql
+  - composer require --dev satooshi/php-coveralls:dev-master
+  - composer install
+
+after_script:
+  - php vendor/bin/coveralls -v
